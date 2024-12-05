@@ -1,7 +1,7 @@
 # One Night at Freddy's
 
 ## Demo
-Demo Video: Will be added later
+Demo Video: https://youtu.be/2wawK5p6Bi4
 
 ## GitHub Repository
 GitHub Repo: https://github.com/AnthonyKPoole/One-Night-at-Freddy-s-Final-Project.git
