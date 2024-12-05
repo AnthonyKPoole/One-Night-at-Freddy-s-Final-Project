@@ -416,7 +416,7 @@ class GameClock:
                 self.hour += 1
 
 
-            if self.hour >= self.end_hour:
+            if self.hour == self.end_hour:
                 self.running = False
 
     def get_time(self):
