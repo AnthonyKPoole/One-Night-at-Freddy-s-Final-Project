@@ -14,7 +14,7 @@ class Freddy:
         self.door_time = None
         self.jumpscare_triggered = False
         self.jumpscare_delay = 5000
-    def AI(self, Rdoorstage, screen):
+    def AI(self, Rdoorstage, screen, menuactive):
         current_time = pygame.time.get_ticks()
         if self.jump == 0:
             if current_time - self.last_attempt >= self.move_delay:
@@ -49,17 +49,18 @@ class Freddy:
             self.FreddyAI = 4
 
         if self.CurrLoc == 8:
-            if Rdoorstage == 1:
+            if Rdoorstage == 0:
                 if self.door_time is None:
                     self.door_time = pygame.time.get_ticks()
                 elif current_time - self.door_time >= self.jumpscare_delay and not self.jumpscare_triggered:
-                    self.trigger_jumpscare(screen)
+                    self.trigger_jumpscare(screen, menuactive)
             else:
                 self.door_time = None
-    def trigger_jumpscare(self, jump, screen):
+                self.FreddyAI = 0
+    def trigger_jumpscare(self, screen, menuactive):
         self.jump = 1
         self.jumpscare_triggered = True
-        Jumpscare(screen, jump)
+        Jumpscare(screen, self.jump, menuactive)
 
 class Bonnie:
     def __init__(self, BonAgg, jump):
@@ -73,7 +74,7 @@ class Bonnie:
         self.door_time = None
         self.jumpscare_triggered = False
         self.jumpscare_delay = 5000
-    def AI(self, Ldoorstage, screen):
+    def AI(self, Ldoorstage, screen, menuactive):
         current_time = pygame.time.get_ticks()
 
         if current_time - self.last_attempt >= self.move_delay:
@@ -113,17 +114,18 @@ class Bonnie:
             self.BonnieAI = 5
         
         if self.CurrLoc == 8:
-            if Ldoorstage == 1:
+            if Ldoorstage == 0:
                 if self.door_time is None:
                     self.door_time = pygame.time.get_ticks()
                 elif current_time - self.door_time >= self.jumpscare_delay and not self.jumpscare_triggered:
-                    self.trigger_jumpscare(screen)
+                    self.trigger_jumpscare(screen, menuactive)
             else:
                 self.door_time = None
-    def trigger_jumpscare(self, jump, screen):
+                self.BonnieAI = 0
+    def trigger_jumpscare(self, screen, menuactive):
         self.jump = 2
         self.jumpscare_triggered = True
-        Jumpscare(screen, jump)
+        Jumpscare(screen, self.jump, menuactive)
 
 class Chica:
     def __init__(self, ChicaAgg, jump):
@@ -137,7 +139,7 @@ class Chica:
         self.door_time = None
         self.jumpscare_triggered = False
         self.jumpscare_delay = 5000
-    def AI(self, Rdoorstage, screen):
+    def AI(self, Rdoorstage, screen, menuactive):
         current_time = pygame.time.get_ticks()
         if self.jump == 0:
             if current_time - self.last_attempt >= self.move_delay:
@@ -162,17 +164,18 @@ class Chica:
             self.ChicaAI = 3
 
         if self.CurrLoc == 8:
-            if Rdoorstage == 1:
+            if Rdoorstage == 0:
                 if self.door_time is None:
                     self.door_time = pygame.time.get_ticks()
                 elif current_time - self.door_time >= self.jumpscare_delay and not self.jumpscare_triggered:
-                    self.trigger_jumpscare(screen)
+                    self.trigger_jumpscare(screen, menuactive)
             else:
                 self.door_time = None
-    def trigger_jumpscare(self, jump, screen):
+                self.ChicaAI = 0
+    def trigger_jumpscare(self, screen, menuactive):
         self.jump = 3
         self.jumpscare_triggered = True
-        Jumpscare(screen, jump)
+        Jumpscare(screen, self.jump, menuactive)
    
 class Foxy:
     def __init__(self, FoxyAgg, jump):
@@ -187,7 +190,7 @@ class Foxy:
         self.jumpscare_triggered = False
         self.jumpscare_delay = 4000
 
-    def AI(self, Ldoorstage, screen):
+    def AI(self, Ldoorstage, screen, menuactive):
         current_time = pygame.time.get_ticks()
         if self.jump == 0:
             if current_time - self.last_attempt >= self.move_delay:
@@ -213,18 +216,19 @@ class Foxy:
         if self.FoxAI > 4:
             self.FoxAI = 4
         if self.CurrLoc == 8:
-            if Ldoorstage == 1:
+            if Ldoorstage == 0:
                 if self.door_time is None:
                     self.door_time = pygame.time.get_ticks()
                 elif current_time - self.door_time >= self.jumpscare_delay and not self.jumpscare_triggered:
-                    self.trigger_jumpscare(screen)
+                    self.trigger_jumpscare(screen, menuactive)
             else:
                 self.door_time = None
+                self.FoxAI = 0
 
-    def trigger_jumpscare(self, jump, screen):
+    def trigger_jumpscare(self, screen, menuactive):
         self.jump = 4
         self.jumpscare_triggered = True
-        Jumpscare(screen, jump)
+        Jumpscare(screen, self.jump, menuactive)
 
 
 
@@ -387,7 +391,7 @@ class ShareAnimatronic:
             
 
 class GameClock:
-    def __init__(self, start_hour=12, start_minute=0, end_hour=6, speed=1000):
+    def __init__(self, start_hour=12, start_minute=00, end_hour=6, speed=1000):
         self.hour = start_hour
         self.minute = start_minute
         self.end_hour = end_hour
@@ -398,7 +402,11 @@ class GameClock:
     def update_time(self, jump=0):
         if jump != 0:
             return
+        if not self.running:
+            return
+        
         current_time = pygame.time.get_ticks()
+        
         if current_time - self.last_update >= self.speed:
             self.minute += 1
             self.last_update = current_time
@@ -406,6 +414,7 @@ class GameClock:
             if self.minute >= 60:
                 self.minute = 0
                 self.hour += 1
+
 
             if self.hour >= self.end_hour:
                 self.running = False
@@ -443,6 +452,10 @@ def main():
 
         if officeactive:
             office(screen, FreddyaggressionLevel, BonnieaggressionLevel, ChicaaggressionLevel, FoxyaggressionLevel)
+
+        if officeactive == False and menuactive == False:
+            menuactive = GameOver(screen, menuactive)
+
 
         clock.tick(60)
 
@@ -683,25 +696,28 @@ def office(screen,  FreddyaggressionLevel, BonnieaggressionLevel, Chicaaggressio
         current_time = game_clock.get_time()
         time_text = font.render(current_time, True, (255, 255, 255))
 
-        freddy.AI(Rdoorstage, screen)
-        foxy.AI(Ldoorstage, screen)
-        bonnie.AI(Ldoorstage, screen)
-        chica.AI(Rdoorstage, screen)
+        freddy.AI(Rdoorstage, screen, menuactive)
+        foxy.AI(Ldoorstage, screen, menuactive)
+        bonnie.AI(Ldoorstage, screen, menuactive)
+        chica.AI(Rdoorstage, screen, menuactive)
 
 
         if jump == 0:
             text_rect = time_text.get_rect()
             text_rect.topright = (screen.get_width() - 20, 20)
             screen.blit(time_text, text_rect.topleft)
+        if jump > 1:
+            officeactive = False 
+        game_clock.update_time()
 
 
         pygame.display.update()
-    if not game_clock.running:
-        officeactive = False
-        GameWin(screen, menuactive)
+        if game_clock.running == False:
+                officeactive = False  
+                menuactive = GameWin(screen, menuactive)
 
-    return officeactive, GOScene, GWScene, menuactive
-
+    if officeactive:
+        office(screen)
 def DoorToggle(Ldoorstage, Rdoorstage, doorL_close, doorL_open, doorR_close, doorR_open):
     if Ldoorstage == 0:
         doorL = doorL_open
@@ -715,10 +731,32 @@ def DoorToggle(Ldoorstage, Rdoorstage, doorL_close, doorL_open, doorR_close, doo
 
     return doorL, doorR
 
-def Jumpscare(screen, jump):
-    GameOver(screen)
+def Jumpscare(screen, jump, menuactive):
+    menuactive = GameOver(screen, menuactive)
+    return menuactive
+
     
             
+
+def GameWin(screen, menuactive):
+    WinScene = True
+    GameWinScreen = pygame.image.load("6AM.png")
+
+    while WinScene:
+        screen.blit(GameWinScreen, (0, 0))
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN: 
+                    WinScene = False  
+                    menuactive = True 
+                    main()
+
+    return menuactive
 
 def GameOver(screen, menuactive):
     GOScene = True
@@ -727,21 +765,15 @@ def GameOver(screen, menuactive):
         screen.blit(GameOverScreen, (0, 0))
         pygame.display.flip()
         for event in pygame.event.get():
-            if event.key == pygame.K_RETURN:
-                GOScene = False
-                menuactive = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    GOScene = False
+                    menuactive = True
+                    main()
+    return menuactive 
 
 
-def GameWin(screen, menuactive):
-    GWScene = True
-    GameWinScreen = pygame.image.load("6AM.png")
-    while GWScene:
-        screen.blit(GameWinScreen, (0, 0))
-        pygame.display.flip()
-        for event in pygame.event.get():
-            if event.key == pygame.K_RETURN:
-                GWScene = False
-                menuactive = True
+
 
 if __name__ == "__main__":
     main()
